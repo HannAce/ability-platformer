@@ -4,16 +4,23 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float movementSpeed;
+    [SerializeField] private GameplayConfig gameplayConfig;
+
+    private float movementSpeed;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        InitialiseGameplayConfig();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void InitialiseGameplayConfig()
+    {
+        movementSpeed = gameplayConfig.PlayerMovementSpeed;
+    }
+
+        // Update is called once per frame
+        void Update()
     {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
