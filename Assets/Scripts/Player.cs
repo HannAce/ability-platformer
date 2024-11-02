@@ -6,12 +6,20 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private GameplayConfig gameplayConfig;
 
-    private float movementSpeed;
+    private float movementSpeed = 5;
+    private float jump = 10;
 
     // Start is called before the first frame update
     void Start()
     {
-        InitialiseGameplayConfig();
+        if (gameplayConfig != null)
+        {
+            InitialiseGameplayConfig();
+        }
+        else
+        {
+            Debug.LogError("Error: GameplayConfig is missing a reference for the Player script!");
+        }
     }
 
     private void InitialiseGameplayConfig()
@@ -29,6 +37,10 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             transform.Translate(Vector3.right * Time.deltaTime * movementSpeed);
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            transform.Translate(Vector3.up * Time.deltaTime * jump);
         }
     }
 }
