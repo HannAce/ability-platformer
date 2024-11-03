@@ -287,3 +287,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameplayConfig: {fileID: 11400000, guid: ba2bbd7e24a59d64a99cb8444a465432, type: 2}
+  rb: {fileID: 5662629015784863689}
