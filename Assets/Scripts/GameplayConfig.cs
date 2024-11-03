@@ -7,4 +7,5 @@ public class GameplayConfig : ScriptableObject
 {
     [Header("Player")]
     public float PlayerMovementSpeed;
+    public float PlayerJumpHeight;
 }

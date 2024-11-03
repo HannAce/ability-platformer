@@ -6,8 +6,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private GameplayConfig gameplayConfig;
 
-    private float movementSpeed = 5;
-    private float jump = 10;
+    private float movementSpeed;
+    private float jump;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     private void InitialiseGameplayConfig()
     {
         movementSpeed = gameplayConfig.PlayerMovementSpeed;
+        jump = gameplayConfig.PlayerJumpHeight;
     }
 
         // Update is called once per frame
