@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private GameplayConfig gameplayConfig;
     
@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        PlayerMovement();
+        GetMovementInput();
     }
 
     private void FixedUpdate()
@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
         // }
     }
 
-    private void PlayerMovement()
+    private void GetMovementInput()
     {
         playerMovement = default; // start at default 0 value
 
