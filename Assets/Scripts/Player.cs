@@ -53,7 +53,6 @@ public class Player : MonoBehaviour
         {
             // Slow the player from current movement speed down to 0 using movementDamping
             velocityX = Mathf.Lerp(velocityX, 0, Time.fixedUnscaledDeltaTime * MovementDamping);
-            Debug.Log("Damping");
         }
         
         Vector3 combinedVelocity = new Vector3(velocityX, velocityY, 0);
