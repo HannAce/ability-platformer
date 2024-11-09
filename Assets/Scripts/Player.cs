@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,11 +6,16 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private GameplayConfig gameplayConfig;
-
+    
     [SerializeField] private Rigidbody rb;
-
-    private float movementSpeed;
-    private float jump;
+    
+    private Vector3 playerMovement;
+    private float remainingJumpForce;
+    
+    private float MovementAcceleration => gameplayConfig.MovementAcceleration;
+    private float MaxMovementSpeed => gameplayConfig.MaxMovementSpeed;
+    private float JumpHeight => gameplayConfig.JumpHeight;
+    private float MovementDamping => gameplayConfig.MovementDamping;
 
     // Start is called before the first frame update
     private void Start()
@@ -17,16 +23,7 @@ public class Player : MonoBehaviour
         if (gameplayConfig == null)
         {
             Debug.LogError("Error: GameplayConfig is missing a reference for the Player script!");
-            return;
         }
-
-        InitialiseGameplayConfig();
-    }
-
-    private void InitialiseGameplayConfig()
-    {
-        movementSpeed = gameplayConfig.PlayerMovementSpeed;
-        jump = gameplayConfig.PlayerJumpHeight;
     }
 
     // Update is called once per frame
@@ -35,25 +32,58 @@ public class Player : MonoBehaviour
         PlayerMovement();
     }
 
+    private void FixedUpdate()
+    {
+        rb.AddForce(playerMovement, ForceMode.Impulse);
+
+        if (remainingJumpForce > 0)
+        {
+            rb.AddForce(Vector3.up * remainingJumpForce, ForceMode.Impulse);
+            remainingJumpForce = 0;
+        }
+        
+        float velocityX = rb.velocity.x;
+        float velocityY = rb.velocity.y;
+
+        // Clamp max speed
+        velocityX = Mathf.Clamp(velocityX, -MaxMovementSpeed, MaxMovementSpeed);
+
+        // If not pressing a button to move horizontally
+        if (playerMovement.x == 0)
+        {
+            // Slow the player from current movement speed down to 0 using movementDamping
+            velocityX = Mathf.Lerp(velocityX, 0, Time.fixedUnscaledDeltaTime * MovementDamping);
+            Debug.Log("Damping");
+        }
+        
+        Vector3 combinedVelocity = new Vector3(velocityX, velocityY, 0);
+        rb.velocity = combinedVelocity;
+        
+        // if (rb.velocity.magnitude > MaxMovementSpeed)
+        // {
+        //     rb.velocity = rb.velocity.normalized * MaxMovementSpeed;
+        //     Debug.Log("Clamping to max speed");
+        // }
+    }
+
     private void PlayerMovement()
     {
-        Vector3 playerMovement = default; // start at default 0 value
+        playerMovement = default; // start at default 0 value
 
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            playerMovement += Vector3.left * movementSpeed;
+            playerMovement += Vector3.left * MovementAcceleration;
         }
 
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            playerMovement += Vector3.right * movementSpeed;
+            playerMovement += Vector3.right * MovementAcceleration;
         }
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            playerMovement += Vector3.up * jump;
+            //playerMovement += Vector3.up * jump;
+            remainingJumpForce = JumpHeight;
         }
-
-        rb.MovePosition(rb.position + playerMovement * Time.deltaTime);
     }
 }
