@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GameplayConfig
   m_EditorClassIdentifier: 
   MovementAcceleration: 2
-  JumpHeight: 8
   MaxMovementSpeed: 5
   MovementDamping: 4
+  JumpStrength: 8
+  SlamStrength: 32
