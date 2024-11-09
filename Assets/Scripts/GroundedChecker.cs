@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +10,27 @@ public class GroundedChecker : MonoBehaviour
     [SerializeField] private LayerMask GroundLayer;
     
     public bool IsGrounded;
+
+    // Events
+    public event Action OnBecameGrounded;
+    public event Action OnBecameAirborne;
+    
     
     // Update is called once per frame
     void FixedUpdate()
     {
+        bool wasGrounded = IsGrounded;
         IsGrounded = Physics.OverlapSphere(transform.position, radius, GroundLayer).Length > 0;
+
+        if (!wasGrounded && IsGrounded)
+        {
+            OnBecameGrounded?.Invoke();
+        }
+
+        if (wasGrounded && !IsGrounded)
+        {
+            OnBecameAirborne?.Invoke();
+        }
     }
 
     private void OnDrawGizmos()

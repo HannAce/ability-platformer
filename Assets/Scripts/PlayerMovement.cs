@@ -13,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     
     private Vector3 playerMovement;
     private float remainingJumpForce;
+
+    private bool canSlam = true;
     
     private float MovementAcceleration => gameplayConfig.MovementAcceleration;
     private float MaxMovementSpeed => gameplayConfig.MaxMovementSpeed;
@@ -32,6 +34,13 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("PlayerMovement is missing grounded checker reference!");
         }
+        
+        groundedChecker.OnBecameGrounded += HandleBecameGrounded;
+    }
+    
+    private void OnDestroy()
+    {
+        groundedChecker.OnBecameGrounded -= HandleBecameGrounded;
     }
 
     // Update is called once per frame
@@ -42,35 +51,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.AddForce(playerMovement, ForceMode.Impulse);
-
-        if (remainingJumpForce != 0)
-        {
-            rb.AddForce(Vector3.up * remainingJumpForce, ForceMode.Impulse);
-            remainingJumpForce = 0;
-        }
-        
-        float velocityX = rb.velocity.x;
-        float velocityY = rb.velocity.y;
-
-        // Clamp max speed
-        velocityX = Mathf.Clamp(velocityX, -MaxMovementSpeed, MaxMovementSpeed);
-
-        // If not pressing a button to move horizontally
-        if (playerMovement.x == 0)
-        {
-            // Slow the player from current movement speed down to 0 using movementDamping
-            velocityX = Mathf.Lerp(velocityX, 0, Time.fixedUnscaledDeltaTime * MovementDamping);
-        }
-        
-        Vector3 combinedVelocity = new Vector3(velocityX, velocityY, 0);
-        rb.velocity = combinedVelocity;
-        
-        // if (rb.velocity.magnitude > MaxMovementSpeed)
-        // {
-        //     rb.velocity = rb.velocity.normalized * MaxMovementSpeed;
-        //     Debug.Log("Clamping to max speed");
-        // }
+        MovementForceAndClamping();
+    }
+    
+    private void HandleBecameGrounded()
+    {
+        canSlam = true;
     }
 
     private void GetMovementInput()
@@ -93,17 +79,52 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void MovementForceAndClamping()
+    {
+        rb.AddForce(playerMovement, ForceMode.Impulse);
+
+        if (remainingJumpForce != 0)
+        {
+            rb.AddForce(Vector3.up * remainingJumpForce, ForceMode.Impulse);
+            remainingJumpForce = 0;
+        }
+        
+        // x and y need to be separated and treated differently (for movement and jump)
+        float velocityX = rb.velocity.x;
+        float velocityY = rb.velocity.y;
+
+        // Clamp max speed
+        velocityX = Mathf.Clamp(velocityX, -MaxMovementSpeed, MaxMovementSpeed);
+
+        // If not pressing a button to move horizontally
+        if (playerMovement.x == 0)
+        {
+            // Slow the player from current movement speed down to 0 using movementDamping
+            velocityX = Mathf.Lerp(velocityX, 0, Time.fixedUnscaledDeltaTime * MovementDamping);
+        }
+        
+        Vector3 combinedVelocity = new Vector3(velocityX, velocityY, 0);
+        rb.velocity = combinedVelocity;
+    }
+
     private void TryJumpOrGroundSlam()
     {
         // If player is on the ground, jump
         if (groundedChecker.IsGrounded)
         {
             remainingJumpForce = JumpStrength;
+            
         }
         // If player is not on the ground and is holding down, ground slam
         else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
+            if (!canSlam)
+            {
+                return;
+            }
+            
             remainingJumpForce = -SlamStrength;
+            canSlam = false;
         }
     }
 }
