@@ -9,20 +9,28 @@ public class PlayerMovement : MonoBehaviour
     
     [SerializeField] private Rigidbody rb;
     
+    [SerializeField] private GroundedChecker groundedChecker;
+    
     private Vector3 playerMovement;
     private float remainingJumpForce;
     
     private float MovementAcceleration => gameplayConfig.MovementAcceleration;
     private float MaxMovementSpeed => gameplayConfig.MaxMovementSpeed;
-    private float JumpHeight => gameplayConfig.JumpHeight;
     private float MovementDamping => gameplayConfig.MovementDamping;
+    
+    private float JumpStrength => gameplayConfig.JumpStrength;
+    private float SlamStrength => gameplayConfig.SlamStrength;
 
     // Start is called before the first frame update
     private void Start()
     {
         if (gameplayConfig == null)
         {
-            Debug.LogError("Error: GameplayConfig is missing a reference for the Player script!");
+            Debug.LogError("PlayerMovement is missing gameplay config reference!");
+        }
+        if (groundedChecker == null)
+        {
+            Debug.LogError("PlayerMovement is missing grounded checker reference!");
         }
     }
 
@@ -36,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.AddForce(playerMovement, ForceMode.Impulse);
 
-        if (remainingJumpForce > 0)
+        if (remainingJumpForce != 0)
         {
             rb.AddForce(Vector3.up * remainingJumpForce, ForceMode.Impulse);
             remainingJumpForce = 0;
@@ -81,8 +89,21 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            //playerMovement += Vector3.up * jump;
-            remainingJumpForce = JumpHeight;
+            TryJumpOrGroundSlam();
+        }
+    }
+
+    private void TryJumpOrGroundSlam()
+    {
+        // If player is on the ground, jump
+        if (groundedChecker.IsGrounded)
+        {
+            remainingJumpForce = JumpStrength;
+        }
+        // If player is not on the ground and is holding down, ground slam
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            remainingJumpForce = -SlamStrength;
         }
     }
 }

@@ -8,7 +8,10 @@ public class GameplayConfig : ScriptableObject
 {
     [Header("Player")]
     public float MovementAcceleration;
-    public float JumpHeight;
     public float MaxMovementSpeed;
     public float MovementDamping;
+    public float JumpStrength;
+    public float SlamStrength;
+    
+    
 }
