@@ -5,20 +5,19 @@ using UnityEngine;
 
 public class PickupObject : MonoBehaviour
 {
-    private int totalCollected = 0;
-
-    // Update is called once per frame
-    void Update()
+    InventoryManager inventoryManager;
+    
+    private void Start()
     {
-        
+        inventoryManager = InventoryManager.Instance;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
-            totalCollected++;
-            Debug.Log("Total items collected: " + totalCollected);
+            inventoryManager.addTotalCollected();
+            Debug.Log(inventoryManager.totalCollected);
             Destroy(this.gameObject);
         }
     }
