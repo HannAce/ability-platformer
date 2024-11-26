@@ -1,21 +1,20 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class Interactable_MoveableWall : Interactable
+public class Interactable_MoveablePlatform : Interactable
 {
     [SerializeField] private float moveSpeed;
-    [SerializeField] private float yMoveAmount;
+    [SerializeField] private float xMoveAmount;
 
+    private Vector3 startPosition;
     private Vector3 endPosition;
     
     private bool isActive = false;
 
     private void Awake()
     {
-        endPosition = transform.position + new Vector3(0f, yMoveAmount, 0f);
+        endPosition = transform.position + new Vector3(xMoveAmount, 0f, 0f);
     }
 
     private void FixedUpdate()
@@ -25,7 +24,7 @@ public class Interactable_MoveableWall : Interactable
             return;
         }
         
-        transform.position = Vector3.Lerp(transform.position, endPosition, Time.fixedDeltaTime * moveSpeed); 
+        transform.position = Vector3.Lerp(transform.position, endPosition, Time.fixedDeltaTime * moveSpeed);
     }
 
     [ContextMenu("Activate")]
