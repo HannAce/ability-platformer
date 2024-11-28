@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73ed5ae5093b6884bb2dfd95d55dbd5b, type: 3}
   m_Name: GameplayConfig
   m_EditorClassIdentifier: 
+  MovementSpeed: 6
   MovementAcceleration: 2
   MaxMovementSpeed: 5
   MovementDamping: 4

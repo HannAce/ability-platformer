@@ -8,12 +8,13 @@ public class PressButton : MonoBehaviour
     [SerializeField] private Interactable interactable;
     
     [SerializeField] private LayerMask layerMask; 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
-        // Move player Layer into a manager at some point
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            interactable.StartInteract();
-        }
+        interactable.StartInteract();
+    }
+
+    public void Interact()
+    {
+        interactable.StartInteract();
     }
 }

@@ -7,11 +7,12 @@ using UnityEngine.Serialization;
 public class GameplayConfig : ScriptableObject
 {
     [Header("Player")]
-    public float MovementAcceleration;
-    public float MaxMovementSpeed;
-    public float MovementDamping;
-    public float JumpStrength;
-    public float SlamStrength;
+    public float MovementSpeed;
     
-    
+    [Header("Physics Player")]
+    [HideInInspector] public float MovementAcceleration;
+    [HideInInspector] public float MaxMovementSpeed;
+    [HideInInspector] public float MovementDamping;
+    [HideInInspector] public float JumpStrength;
+    [HideInInspector] public float SlamStrength;
 }
